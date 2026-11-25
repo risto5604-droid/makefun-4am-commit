@@ -22,8 +22,12 @@ LINE = "4 a.m.: the bug is gone. So is the feature. You're welcome."
 # Gate: the entry must be a single commit-message line of at most 200
 # characters, not only whitespace. ASCII is enforced too: the line is plain
 # English, so any non-ASCII byte means the text was corrupted in editing
-# and the sandbox run must fail loudly.
-assert 1 <= len(LINE) <= 200 and LINE.strip() and LINE.isascii() and "\n" not in LINE, "entry line violates the 1-200 character single-line gate"
+# and the sandbox run must fail loudly. The line must also be exactly as
+# written — no leading/trailing padding and no double spaces — because
+# padding would change the commit message the judge reads without
+# changing its visible meaning, and a padded line must fail loudly here
+# rather than silently ship a different entry.
+assert 1 <= len(LINE) <= 200 and LINE.strip() and LINE.isascii() and "\n" not in LINE and LINE == LINE.strip() and "  " not in LINE, "entry line violates the 1-200 character single-line gate"
 
 def main():
     os.makedirs("/output", exist_ok=True)
